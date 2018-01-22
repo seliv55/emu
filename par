@@ -1,0 +1,70 @@
+0   hkf par 2 0.1 0.1
+1   hkr par 2 0.1 0.1
+2   pfk par 2 0.1 0.1
+3   fbase par 2 0.1 0.1
+4   aldf par 2 0.1 0.1
+5   aldr par 3 0.1 0.1 0.1
+6   t3pep par 2 0.1 0.1
+7   pept3 par 2 0.1 0.1
+8   pk par 2 0.1 0.1
+9   pyrlac par 2 0.1 0.1
+10   lacpyr par 2 0.1 0.1
+11   citdr par 2 0.1 0.1
+12   citdf par 2 0.1 0.1
+13   csyn par 3 0.1 0.1 0.1
+14   akgcit par 3 0.1 0.1 0.1
+15   citakg par 2 0.1 0.1
+16   akgdr par 2 0.1 0.1
+17   akgdf par 2 0.1 0.1
+18   citoxc par 2 0.1 0.1
+19   liase par 2 0.1 0.1
+20   ppp par 2 0.1 0.1
+21   pdh par 2 0.1 0.1
+22   pc par 3 0.1 0.1 0.1
+23   malic par 2 0.1 0.1
+24   malicc par 2 0.1 0.1
+25   pyrdf par 2 0.1 0.1
+26   pyrdr par 2 0.1 0.1
+27   maloa par 2 0.1 0.1
+28   oamal par 2 0.1 0.1
+29   oadr par 2 0.1 0.1
+30   oadf par 2 0.1 0.1
+31   akgfum par 2 0.1 0.1
+32   glnin par 2 0.1 0.1
+33   glnout par 2 0.1 0.1
+34   gluin par 2 0.1 0.1
+35   gluout par 2 0.1 0.1
+36   tkp5k par 2 0.1 0.1
+37   tkh6k par 2 0.1 0.1
+38   tks7k par 2 0.1 0.1
+39   tkt3a par 3 0.1 0.1 0.1
+40   tke4a par 3 0.1 0.1 0.1
+41   tkp5a par 3 0.1 0.1 0.1
+42   tas7k par 2 0.1 0.1
+43   tah6k par 2 0.1 0.1
+44   tae4a par 3 0.1 0.1 0.1
+45   tat3a par 3 0.1 0.1 0.1
+Eglc 1.0
+h6p 1.0
+fbp 1.0
+t3p 1.0
+pep 1.0
+pyrc 1.0
+Elac 1.0
+citc 1.0
+cit 1.0
+oa 1.0
+accoa 1.0
+akgc 1.0
+co2 1.0
+akg 1.0
+oac 1.0
+p5 1.0
+pyr 1.0
+fumal 1.0
+Egln 1.0
+Eglu 1.0
+gae 1.0
+e4p 1.0
+s7p 1.0
+dhe 1.0

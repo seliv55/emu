@@ -1,0 +1,47 @@
+ hkf Eglc 6 -> h6p 6 eq
+ hkr h6p 6 -> Eglc 6 eq
+ pfk h6p 6 -> fbp 6 eq
+ fbase fbp 6 -> h6p 6 eq
+ aldf fbp 6 -> t3p 3 + t3p 3 spli  0 - 2 1 - 1 2 - 0 3 - 0 4 - 1 5 - 2
+ aldr t3p 3 + t3p 3 -> fbp 6 cond  0 - 2 1 - 1 2 - 0 0 - 3 1 - 4 2 - 5
+ t3pep t3p 3 -> pep 3 eq
+ pept3 pep 3 -> t3p 3 eq
+ pk pep 3 -> pyrc 3 eq
+ pyrlac pyrc 3 -> Elac 3 eq
+ lacpyr Elac 3 -> pyrc 3 eq
+ citdr citc 6 -> cit 6 eq
+ citdf cit 6 -> citc 6 eq
+ csyn oa 4 + accoa 2 -> cit 6    cond 0 - 0 1 - 1 2 - 2 3 - 3 0 - 4 1 - 5 
+ akgcit akgc 5 + co2 1 -> citc 6 cond 0 - 0 1 - 1 2 - 2 3 - 4 4 - 5 0 - 3 
+ citakg cit 6 -> akg 5 + co2 1   spli 0 - 0 1 - 1 2 - 2 4 - 3 5 - 4 3 - 0
+ akgdr akgc 5 -> akg 5 eq
+ akgdf akg 5 -> akgc 5 eq
+ citoxc citc 6 -> akgc 5 + co2 1 spli 0 - 0 1 - 1 2 - 2 4 - 3 5 - 4 3 - 0
+ liase citc 6 -> oac 4 + accoa 2 spli 0 - 0 1 - 1 2 - 2 3 - 3 4 - 0 5 - 1
+ ppp h6p 6 ->  p5 5 + co2 1      spli 1 - 0 2 - 1 3 - 2 4 - 3 5 - 4 0 - 0
+ pdh pyr 3 -> accoa 2 + co2 1    spli 1 - 0 2 - 1 0 - 0
+ pc pyr 3 + co2 1 -> oa 4        cond 0 - 0 1 - 1 2 - 2 0 - 3
+ malic fumal 4 -> pyr 3 + co2 1  spli 0 - 0 1 - 1 2 - 2 3 - 0
+ malicc oac 4 -> pyrc 3 + co2 1  spli 0 - 0 1 - 1 2 - 2 3 - 0
+ pyrdf pyrc 3 -> pyr 3 eq
+ pyrdr pyr 3 -> pyrc 3 eq
+ maloa fumal 4 -> oa 4 eq
+ oamal oa 4 -> fumal 4 eq
+ oadr oac 4 -> fumal 4 eq
+ oadf fumal 4 -> oac 4 eq
+ akgfum akg 5 -> fumal 4 + co2 1 spli 0 - 0 1 - 1 2 - 2 3 - 3 4 - 0
+ glnin Egln 5 -> akg 5 eq
+ glnout akg 5 -> Egln 5 eq
+ gluin Eglu 5 -> akg 5 eq
+ gluout akg 5 -> Eglu 5 eq
+ tkp5k p5  5 -> t3p 3 + gae 2 spli 2 - 0 3 - 1 4 - 2 0 - 0 1 - 1
+ tkh6k h6p 6 -> e4p 4 + gae 2 spli 2 - 0 3 - 1 4 - 2 5 - 3 0 - 0 1 - 1
+ tks7k s7p 7 -> p5  5 + gae 2 spli 2 - 0 3 - 1 4 - 2 5 - 3 6 - 4 0 - 0 1 - 1
+ tkt3a t3p 3 + gae 2 -> p5  5 cond 0 - 2 1 - 3 2 - 4 0 - 0 1 - 1
+ tke4a e4p 4 + gae 2 -> h6p 6 cond 0 - 2 1 - 3 2 - 4 3 - 5 0 - 0 1 - 1
+ tkp5a p5  5 + gae 2 -> s7p 7 cond 0 - 2 1 - 3 2 - 4 3 - 5 4 - 6 0 - 0 1 - 1
+ tas7k s7p 7 -> e4p 4 + dhe 3 spli 3 - 0 4 - 1 5 - 2 6 - 3 0 - 0 1 - 1 2 - 2
+ tah6k h6p 6 -> t3p 3 + dhe 3 spli 3 - 0 4 - 1 5 - 2 0 - 0 1 - 1 2 - 2
+ tae4a e4p 4 + dhe 3 -> s7p 7 cond 0 - 3 1 - 4 2 - 5 3 - 6 0 - 0 1 - 1 2 - 2
+ tat3a t3p 3 + dhe 3 -> h6p 6 cond 0 - 3 1 - 4 2 - 5 0 - 0 1 - 1 2 - 2
+
