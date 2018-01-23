@@ -77,7 +77,7 @@ double Ldistr::integrbs(){
    siso(pyinit,ni);         //locate EMUs for ODE solving
        sinit();             //set iitial concentrations as m0
        markinit();          //set initial substrate labeling
-       shiso(pyinit);             //show isotopomers for all EMUs
+//       shiso(pyinit);             //show isotopomers for all EMUs
        tm=1.;
 	for(int i=1;i<ntime;i++){
       cout<<"ttime="<<x1<<endl;
@@ -105,7 +105,11 @@ void isoT::Function(double x, double *y, double *dy){
 	
 void Ldistr::tsolve(const double tmax){
 	// dimension of problem
-   scon(xx);
+double yy[len];
+   int ni=scon(yy); 
+   siso(yy,ni);
+       sinit();
+       markinit();          //set initial substrate labeling
 	// initial value for x
 	 int kmax=25;
    double xbeg(0.0), dx = tmax/((double)kmax), xend=dx;
@@ -122,12 +126,12 @@ void Ldistr::tsolve(const double tmax){
 	// analytical Jacobian function provided
 	 int ijac(0);
 	// number of non-zero rows below main diagonal of Jacobian
-	int mljac(nmet);
+	int mljac(len);
 	// number of non-zero rows above main diagonal of Jacobian
-	int mujac(nmet);
+	int mujac(len);
 	// Mass matrix routine is identity
 	const int imas(0);
-	int mlmas(nmet);
+	int mlmas(len);
 	int mumas(0);
 	
 	// Use default values (see header files) for these parameters:
@@ -142,28 +146,29 @@ void Ldistr::tsolve(const double tmax){
 	
 ostringstream skin; 
 skin<<"0 ";
-          for (int j=0;j<nmet;j++) cout<<xx[j]<<" "; cout<<endl;
-for(int i=0;i<kmax;i++){
-	isT stiffT(nmet, xx, xbeg, xend, dx, itoler, rtoler, atoler, iout, hinit, hmax, nmax, uround, safe, facl, facr, ijac, mljac,		mujac, imas, mlmas, mumas, nit, startn, nind1, nind2, nind3, npred, m1, m2, hess, fnewt, quot1, quot2, thet);
+//          for (int j=0;j<nmet;j++) cout<<xx[j]<<" "; cout<<endl;
+//for(int i=0;i<kmax;i++){
+//	isT stiffT(len, yy, xbeg, xend, dx, itoler, rtoler, atoler, iout, hinit, hmax, nmax, uround, safe, facl, facr, ijac, mljac,		mujac, imas, mlmas, mumas, nit, startn, nind1, nind2, nind3, npred, m1, m2, hess, fnewt, quot1, quot2, thet);
 //  isT stiffT(len, xx, xbeg, xend, dx, ijac, mljac,mujac, imas, mlmas, mumas);
-	stiffT.Integrate();
-        skin<<xend<<" ";
-	for(int i=0;i<nmet; i++) skin<<xx[i]<<" "; skin<<endl;
-	xbeg=xend; xend += dx;
-	}	for (int j=0;j<nmet;j++) cout<<xx[j]<<" "; cout<<endl;
-	kin0=skin.str();
-   int ni=nmet;
-   siso(xx,ni);
-       emudyn.sinit();
-    xbeg=0.0;  xend=dx;	 mljac=(len); mujac=(len); mlmas=(len);
+//	stiffT.Integrate();
+//        skin<<xend<<" ";
+//	for(int i=0;i<nmet; i++) skin<<xx[i]<<" "; skin<<endl;
+//	xbeg=xend; xend += dx;
+//	}	//for (int j=0;j<nmet;j++) cout<<xx[j]<<" "; cout<<endl;
+//	kin0=skin.str();
+//   int ni=nmet;
+//   siso(xx,ni);
+//       emudyn.sinit();
+//    xbeg=0.0;  xend=dx;	 mljac=(len); mujac=(len); mlmas=(len);
 	
-          shiso(xx);// kmax=1;
+//          shiso(yy);// kmax=1;
 for(int i=0;i<kmax;i++){
-//  isoT stifT(len, xx, xbeg, xend, dx, itoler, rtoler, atoler, iout, hinit, hmax, nmax, uround, safe, facl, facr, ijac, mljac,   mujac, imas, mlmas, mumas, nit, startn, nind1, nind2, nind3, npred, m1, m2, hess, fnewt, quot1, quot2, thet);
-  isoT stifT(len, xx, xbeg, xend, dx, ijac, mljac,mujac, imas, mlmas, mumas);
+//  isoT stifT(len, yy, xbeg, xend, dx, itoler, rtoler, atoler, iout, hinit, hmax, nmax, uround, safe, facl, facr, ijac, mljac,   mujac, imas, mlmas, mumas, nit, startn, nind1, nind2, nind3, npred, m1, m2, hess, fnewt, quot1, quot2, thet);
+  isoT stifT(len, yy, xbeg, xend, dx, ijac, mljac,mujac, imas, mlmas, mumas);
 	stifT.Integrate();
 	xbeg=xend; xend += dx;
-	}	shiso(xx);cout<<ni<<endl;
+	}
+		shiso(yy);cout<<ni<<endl;
 	delete rtoler;
 	delete atoler;
 }

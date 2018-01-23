@@ -34,6 +34,8 @@ using namespace std;
    for(int i=0;i<met.size();i++) { aaa=met[i]->getimya(); // define the emu that are measured:
      cout<<i<<" "<<aaa<<"; ";
       if(aaa=="Elac")  met[i]->setic("012",oblst); 
+      if(aaa=="Eglu")  met[i]->setic("1234",oblst); 
+      if(aaa=="p5")  met[i]->setic("01234",oblst); 
      if(aaa=="Egln")   met[i]->setic("01234",oblst); }
       int nc(7);// number of passages through the reaction scheme
    // emu to follow
@@ -71,7 +73,7 @@ using namespace std;
        }
                    k++;}
   }
-      fo.open("reshemu/code/asdf.cpp"); fo<<"#include <iostream>\n#include <cmath>\n#include \"new.h\"\nusing namespace std;\nvoid Ldistr::mdistr(double *py,double *pdydt,double t) {\n\tint nx=nmet, ni=nmet;\n//	siso(py,ni);\n\tsdiso(pdydt,nx);\n\tVt=Vi*exp(mu*t);\n\tconcor(py);\n\tf(py,pdydt);\n\tff(py,pdydt);\n";
+      fo.open("reshemu/asdf.cpp"); fo<<"#include <iostream>\n#include <cmath>\n#include \"new.h\"\nusing namespace std;\nvoid Ldistr::mdistr(double *py,double *pdydt,double t) {\n\tint nx=nmet, ni=nmet;\n//	siso(py,ni);\n\tsdiso(pdydt,nx);\n\tVt=Vi*exp(mu*t);\n\tconcor(py);\n\tf(py,pdydt);\n\tff(py,pdydt);\n";
       fo<<ostr.str()<<"\tvolume(Vt); }\n"; fo.close();
 //       for(int i=0;i<obnum;i++) { oblst[i]->showmet(); }/**/
     ostringstream sfo;
@@ -80,6 +82,6 @@ using namespace std;
        for(int i=0;i<rnum;i++) { rr[i].wpar(parol,i); }/**/
        for(int i=0;i<met.size();i++) { met[i]->winit(parol); }/**/
        fo.open("par"); fo<<parol.str(); fo.close();
-       fo.open("metemu"); fo<<sfo.str(); fo.close();
+       fo.open("reshemu/metemu"); fo<<sfo.str(); fo.close(); cout<<'\n';
   return 0;
 }

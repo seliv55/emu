@@ -23,9 +23,8 @@ int main () {
    emudyn.readex("mglc",1);
   time_t ts=clock(); 
    emudyn.ddisolve();
-//   emudyn.tisolve(100.);
+//   emudyn.tsolve(100.);
 //   emudyn.integrbs();
-//     emudyn.onestep();
    tf= (clock()-ts);
 	emudyn.gcon();
 	 cout<<"time="<< tf / (double) CLOCKS_PER_SEC<<" s\n"; 

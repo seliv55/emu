@@ -45,7 +45,7 @@ public:
      std::cout<<name<<": "; 
      for(int i=0;i<niso;i++) { double fr=iso[i]/sumiso;
          if(eda[i].sd>0.009) {a=(fr-eda[i].mean)/eda[i].sd; xi += a*a;}
-         std::cout<<eda[i].mean<<"-"<<fr<<" ";}//<<" xi:"<<xi
+         std::cout<<eda[i].mean<<"-"<<fr<<", ";}//<<" xi:"<<xi
      std::cout<<"; sum="<<sumiso<<"; xi="<<xi<<"\n";   
     return xi;}
     
@@ -137,8 +137,10 @@ public:
      
   int glen(){return len;} //length of array of isotopomers
   
-  double shiso(double *vec){ double xi(0); //show  EMUs
-      if(edata.gniso()){std::cout<<name<<":\t"<<edata.getsfrg()<<"-"; int maxemu=findmaxemu(vec); xi=emu[maxemu].sfrac(edata.geda(1));}
+  double shiso(double *vec){ double xi(0); int emunum;//show  EMUs
+      if(edata.gniso()){std::cout<<name<<":\t"<<edata.getsfrg()<<"-";
+        emunum=findemu(edata.getsfrg()); if(emunum>=0) xi=emu[emunum].sfrac(edata.geda(1));}
+       if(emunum<0) std::cout<<'\n';
 //        edata.shex(1);
         return xi;}
         
@@ -147,7 +149,8 @@ public:
   void scon(double *vec,int ni){ vec[ni]=conc;}
   
   int markinit(std::string mname,std::string mark,double mval) {
-     if(mname==name){  for(int i=0;i<nemus;i++) emu[i].markinit(mark,mval); std::cout<<name<<" mark="<<mark<<" %"<<mval<<'\n'; return 1; } 
+     if(mname==name){  for(int i=0;i<nemus;i++) emu[i].markinit(mark,mval);
+      std::cout<<name<<" mark="<<mark<<" %"<<mval<<'\n'; return 1; } 
            return 0;}
                            
 //  double getxi(){ if(ieref == -1) return 0.;
@@ -162,11 +165,8 @@ public:
   int fndemu(std::string sss){
        for(int i=0;i<nemus;i++) if(emu[i].cmname(sss)) {ieref=i; break;}  return ieref;}
        
-  int findmaxemu(double *vec){  int emulen(0),emunum;
-       for(int i=0;i<nemus;i++) if(emu[i].gniso()>emulen) {emulen=emu[i].gniso(); emunum=i;}
-                          else if(emu[i].gniso()==emu[emunum].gniso())
-                             if(vec[emu[i].gnvec()]<vec[emu[emunum].gnvec()]) {
-                                emulen=emu[i].gniso(); emunum=i;}
+  int findemu(std::string exemu){  int emunum(-1);
+       for(int i=0;i<nemus;i++) if(emu[i].gname()==exemu)  {emunum=i; break;}
          return emunum;}
        
   void sinit(){for(int i=0;i<nemus;i++) emu[i].sinit(conc);}
@@ -175,17 +175,17 @@ public:
   void readc0(std::ifstream& fi) {std::string aaa;
     fi>>aaa>>conc; if(aaa!=name) std::cout<<aaa<<"name conflict!"<<name<<std::endl;}
 Metab(){ieref=-1;}
-~Metab(){if(ieref != -1)  delete[] emu;}
+~Metab(){  delete[] emu;}
 };
 
 class Ldistr {
  int hkf, hkr, pfk, fbase, aldf, aldr, t3pep, pept3, pk, pyrlac, lacpyr, citdr, citdf, csyn, akgcit, citakg, akgdr, akgdf, citoxc, liase, ppp, pdh, pc, malic, malicc, pyrdf, pyrdr, maloa, oamal, oadr, oadf, akgfum, glnin, glnout, gluin, gluout, tkp5k, tkh6k, tks7k, tkt3a, tke4a, tkp5a, tas7k, tah6k, tae4a, tat3a, nre;
  int Eglc, h6p, fbp, t3p, pep, pyrc, Elac, citc, cit, oa, accoa, akgc, co2, akg, oac, p5, pyr, fumal, Egln, Eglu, gae, e4p, s7p, dhe, nmet;
-  int ntime, len; //number of timepoints, accounted mass isotopomers
-  Metab *met;
-  Reakcia *rr;
-   double *xx, tex[tt], Vi, Vt, mu;
-       std::string mname, mark; double mval;
+ int ntime, len; //number of timepoints, accounted mass isotopomers
+ Metab *met;
+ Reakcia *rr;
+ double  tex[tt], Vi, Vt, mu, mval;
+ std::string mname, mark;
 public:
  void setmetrea();
  void f(const double *y,double *dydx);
@@ -200,10 +200,7 @@ public:
        fi>>mname>>mname>>mark>>mval;                    // labeled substrate
              }
  void read(std::string fn){ std::ifstream fi(fn.c_str());
-     len=nmet; for(int i=0;i<nmet;i++) len+=met[i].read(fi); xx=new double[len]; std::cout<<"; len "<<len<<std::endl;}
- void onestep(){double yy[len];
-//                  mdistr(xx,yy);
-      for(int i=0;i<len;i++) std::cout<<xx[i]<<" "; std::cout<<"\n";}
+     len=nmet; for(int i=0;i<nmet;i++) len+=met[i].read(fi); std::cout<<"; len "<<len<<std::endl;}
  double readex(std::string fn,int itp);
  int glen() { return len;}
  int gnmet() { return nmet;}
@@ -216,15 +213,16 @@ public:
 //  double getxi(){ double sum=0.; for(int i=0;i<nmet;i++) sum += met[i].getxi();  return sum;}
  void sinit(){for(int i=0;i<nmet;i++) met[i].sinit(); }
  void sumt(){for(int i=0;i<nmet;i++) met[i].sumt(); }
-  void shiso(double *vec){double xi(0.); for(int i=0;i<nmet;i++) xi += met[i].shiso(vec); 
-   std::cout<<"xi="<<xi<<std::endl;}
+ void shiso(double *vec){double xi(0.);std::cout<<"** Data experiment-calculation (emu: m0,m1,...): **\n";
+    for(int i=0;i<nmet;i++) xi += met[i].shiso(vec); 
+    std::cout<<"xi="<<xi<<std::endl;}
  void showflx(){for(int i=0;i<nre;i++) std::cout<<rr[i].gnaz()<<" "<<rr[i].gflx()[0]<<"; "; std::cout << std::endl;}
-void tsolve(const double tmax);
-void tisolve(const double tmax);
-double ddisolve();
-double integrbs();
+ void tsolve(const double tmax);
+ void tisolve(const double tmax);
+ double ddisolve();
+ double integrbs();
 Ldistr(){}
-~Ldistr(){delete[] met; delete[] rr; delete[] xx;}
+~Ldistr(){delete[] met; delete[] rr; }
 };
 
 //---------------------------------------------------------------------------
