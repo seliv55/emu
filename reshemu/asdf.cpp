@@ -7,7 +7,7 @@ void Ldistr::mdistr(double *py,double *pdydt,double t) {
 	siso(py,ni);
 	sdiso(pdydt,nx);
 	Vt=Vi*exp(mu*t);
-	concor(py);
+//	concor(py);
 	f(py,pdydt);
 	ff(py,pdydt);
 met[pyrc].gemu(0)->uni(rr[pyrlac].gflx()[1],met[Elac].gemu(0));// e: 012 -> 012;

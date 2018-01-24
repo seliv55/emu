@@ -59,7 +59,6 @@ public:
       for(int i=0;i<l;i++) {  int npos=name.find(mark.at(i)); // check if the EMU contains the labeled position
                if(npos+1) nmark++;      }
       if(nmark){ iso[nmark]=iso[0]*mval; iso[0] -= iso[nmark];}
-        std::cout<<name<<" nmark: "<<nmark<<" val: "<<iso[nmark]<<'\n';
            }
            
  int siso(double vec[],int ni){nvec=ni; iso=&vec[ni]; return ni+niso;}
@@ -156,7 +155,7 @@ public:
 //  double getxi(){ if(ieref == -1) return 0.;
 //                   else return edata.getxi(gemu(ieref)->sfrac(),gemu(ieref)->gniso());}
   
-  double gcon(){return conc;}
+  double gcon(){return emu[0].sumt();}
   Emu* gemu(int iem){return &emu[iem];}
   int siso(double *vec,int ni){for(int i=0;i<nemus;i++) ni=emu[i].siso(vec,ni); return ni;}
   int sdiso(double *vec,int ni){for(int i=0;i<nemus;i++) ni=emu[i].sdiso(vec,ni); return ni;}
@@ -170,7 +169,7 @@ public:
          return emunum;}
        
   void sinit(){for(int i=0;i<nemus;i++) emu[i].sinit(conc);}
-  void concor(double& a){ a=conc= emu[0].sumt();}
+  void concor(double& a){ a= emu[0].sumt();}
   void sumt(){for(int i=0;i<nemus;i++) emu[i].sumt();}
   void readc0(std::ifstream& fi) {std::string aaa;
     fi>>aaa>>conc; if(aaa!=name) std::cout<<aaa<<"name conflict!"<<name<<std::endl;}
@@ -184,10 +183,11 @@ class Ldistr {
  int ntime, len; //number of timepoints, accounted mass isotopomers
  Metab *met;
  Reakcia *rr;
- double  tex[tt], Vi, Vt, mu, mval;
+ double  *xx, *xinit, tex[tt], Vi, Vt, mu, mval;
  std::string mname, mark;
 public:
  void setmetrea();
+ double* getxx(){return xx;};
  void f(const double *y,double *dydx);
  void ff(const double *y,double *dydx);
  void mdistr(double *py,double *pdydt,double t);
@@ -200,7 +200,9 @@ public:
        fi>>mname>>mname>>mark>>mval;                    // labeled substrate
              }
  void read(std::string fn){ std::ifstream fi(fn.c_str());
-     len=nmet; for(int i=0;i<nmet;i++) len+=met[i].read(fi); std::cout<<"; len "<<len<<std::endl;}
+     len=nmet; for(int i=0;i<nmet;i++) len+=met[i].read(fi);
+      std::cout<<"; len "<<len<<std::endl;
+       xinit=new double[len]; xx=new double[len];}
  double readex(std::string fn,int itp);
  int glen() { return len;}
  int gnmet() { return nmet;}
@@ -221,8 +223,9 @@ public:
  void tisolve(const double tmax);
  double ddisolve();
  double integrbs();
+  void setinit();
 Ldistr(){}
-~Ldistr(){delete[] met; delete[] rr; }
+~Ldistr(){delete[] met; delete[] rr;  delete[] xx;}
 };
 
 //---------------------------------------------------------------------------

@@ -36,28 +36,22 @@ void res(const double& T, double y[],const double yprime[], double delta[], int&
 /**/
 double Ldistr::ddisolve() {
         int info[15],idid=0,lrw=800000,liw=1190,iwork[1190],ipar[2],ires=0,ikin=25;
-double t=0.,xi=0., yy[len], yprime[len],rtol=0.075,atol=1.0e-6,h0=0.1e-5, hmax=5.2, rpar[2], rwork[800000];
+double t=0.,xi=0., yprime[len],rtol=0.075,atol=1.0e-6,h0=0.1e-5, hmax=5.2, rpar[2], rwork[800000];
         for(int i=0;i<15;i++)   info[i]=0;
       info[6]=1; rwork[1]=hmax; rwork[2]=h0; info[10]=1;
  double tout,  tm;
-   int ni=scon(yy); 
-   siso(yy,ni);
-       sinit();
-       markinit();          //set initial substrate labeling
-//       shiso(yy);
-        mdistr(yy, yprime,t);
+//       shiso(xx);
+    for(int i=0;i<len;i++) xx[i]=xinit[i];
+        mdistr(xx, yprime,t);
 	const int KMAX(2);
 	for(int i=1;i<ntime;i++){
-      cout<<"ttime="<<t<<endl;
 	tm=tex[i]/(double)ikin;
         for(int k=0;k<ikin;k++){ tout=t+tm;
-ddassl_(isores,len,t,yy,yprime,tout,info,rtol,atol,idid,rwork,lrw,iwork, liw,  rpar, ipar, jac);
+ddassl_(isores,len,t,xx,yprime,tout,info,rtol,atol,idid,rwork,lrw,iwork, liw,  rpar, ipar, jac);
  if(idid<0) {  throw("dassl problem"); }
     t=tout;
     }
 	}
-      cout<<"ttime="<<t<<endl;
-       shiso(yy);
 return xi;}
 
 void derivsl(const DP x, Vec_IO_DP &y, Vec_O_DP &dydx){
@@ -69,15 +63,12 @@ void derivsl(const DP x, Vec_IO_DP &y, Vec_O_DP &dydx){
 
 double Ldistr::integrbs(){
   DP eps=1.0e-6,h1=0.00001,hmin=1.0e-11,x1=0.0, xfin, tm,xi=0.;
-   const int KMAX(2);  Vec_DP yy(len);  DP *pyinit = &yy[0];
+   const int KMAX(2);  Vec_DP yy(len); 
       xp_p=new Vec_DP(KMAX); yp_p=new Mat_DP(len,KMAX);
         Vec_DP &xp=*xp_p;  Mat_DP &yp=*yp_p;
     int nbad,nok,ikin=10; nrhs=0; kmax=KMAX;
-       int ni=scon(pyinit); //locate the metabolite concentrations for ODE solving
-   siso(pyinit,ni);         //locate EMUs for ODE solving
-       sinit();             //set iitial concentrations as m0
-       markinit();          //set initial substrate labeling
 //       shiso(pyinit);             //show isotopomers for all EMUs
+   for(int i=1;i<len;i++) yy[i]=xinit[i];
        tm=1.;
 	for(int i=1;i<ntime;i++){
       cout<<"ttime="<<x1<<endl;
@@ -89,7 +80,7 @@ double Ldistr::integrbs(){
     }//for(int i=0;i<len;i++) {xx[i]=pyinit[i]; cout<<xx[i]<<" "; } cout<<endl;
 	}
       cout<<"ttime="<<x1<<endl;
-       shiso(pyinit);             //show isotopomers for all EMUs
+   for(int i=1;i<len;i++) xx[i]=yy[i];
         delete yp_p;
         delete xp_p;
  return xi;}

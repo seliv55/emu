@@ -8,6 +8,16 @@ using namespace std;
   Ldistr emudyn; int  ifn=0;
     time_t ts,tf; string fex1="../files/mglc", fex2="../files/mglc";
   extern string foc, kin0, kin, kinflx;
+  void Ldistr::setinit(){
+     setmetrea();//code in nv.cpp: assign numbers for metabolites and reactions
+  read("metemu");//define emus
+   rpar("1");// read reaction constants, initial concentrations of metabolites, labeled substrate
+   readex("mglc",1);
+   int ni=scon(xinit); 
+   siso(xinit,ni);
+       sinit();
+       markinit();          //set initial substrate labeling
+  }
 
 int main () {
    char fn[15];
@@ -16,15 +26,12 @@ int main () {
 	   if(!checkfi.good()) { ifn=i-1; break;}
 	   checkfi.close();
    }
-
-     emudyn.setmetrea();//code in nv.cpp: assign numbers for metabolites and reactions
-  emudyn.read("metemu");//define emus
-   emudyn.rpar("1");// read reaction constants, initial concentrations of metabolites, labeled substrate
-   emudyn.readex("mglc",1);
+ emudyn.setinit();
   time_t ts=clock(); 
    emudyn.ddisolve();
-//   emudyn.tsolve(100.);
 //   emudyn.integrbs();
+//   emudyn.tsolve(100.);
+   emudyn.shiso(emudyn.getxx());
    tf= (clock()-ts);
 	emudyn.gcon();
 	 cout<<"time="<< tf / (double) CLOCKS_PER_SEC<<" s\n"; 
