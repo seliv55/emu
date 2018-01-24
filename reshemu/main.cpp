@@ -8,11 +8,11 @@ using namespace std;
   Ldistr emudyn; int  ifn=0;
     time_t ts,tf; string fex1="../files/mglc", fex2="../files/mglc";
   extern string foc, kin0, kin, kinflx;
-  void Ldistr::setinit(){
+  void Ldistr::setinit(string fimod,string fipar,string fiex,int ntp){
      setmetrea();//code in nv.cpp: assign numbers for metabolites and reactions
-  read("metemu");//define emus
-   rpar("1");// read reaction constants, initial concentrations of metabolites, labeled substrate
-   readex("mglc",1);
+  read(fimod);//define emus
+   rpar(fipar);// read reaction constants, initial concentrations of metabolites, labeled substrate
+   readex(fiex,ntp);
    int ni=scon(xinit); 
    siso(xinit,ni);
        sinit();

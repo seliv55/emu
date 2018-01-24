@@ -96,11 +96,7 @@ void isoT::Function(double x, double *y, double *dy){
 	
 void Ldistr::tsolve(const double tmax){
 	// dimension of problem
-double yy[len];
-   int ni=scon(yy); 
-   siso(yy,ni);
-       sinit();
-       markinit();          //set initial substrate labeling
+    for(int i=0;i<len;i++) xx[i]=xinit[i];
 	// initial value for x
 	 int kmax=25;
    double xbeg(0.0), dx = tmax/((double)kmax), xend=dx;
@@ -113,7 +109,7 @@ double yy[len];
 	// use SolutionOutput routine
 	const int iout(0);
 	// initial step size
-	double hinit(0.01);
+	double hinit(0.00001);
 	// analytical Jacobian function provided
 	 int ijac(0);
 	// number of non-zero rows below main diagonal of Jacobian
@@ -154,12 +150,11 @@ skin<<"0 ";
 	
 //          shiso(yy);// kmax=1;
 for(int i=0;i<kmax;i++){
-//  isoT stifT(len, yy, xbeg, xend, dx, itoler, rtoler, atoler, iout, hinit, hmax, nmax, uround, safe, facl, facr, ijac, mljac,   mujac, imas, mlmas, mumas, nit, startn, nind1, nind2, nind3, npred, m1, m2, hess, fnewt, quot1, quot2, thet);
-  isoT stifT(len, yy, xbeg, xend, dx, ijac, mljac,mujac, imas, mlmas, mumas);
+  isoT stifT(len, xx, xbeg, xend, dx, itoler, rtoler, atoler, iout, hinit, hmax, nmax, uround, safe, facl, facr, ijac, mljac,   mujac, imas, mlmas, mumas, nit, startn, nind1, nind2, nind3, npred, m1, m2, hess, fnewt, quot1, quot2, thet);
+//  isoT stifT(len, xx, xbeg, xend, dx, ijac, mljac,mujac, imas, mlmas, mumas);
 	stifT.Integrate();
 	xbeg=xend; xend += dx;
 	}
-		shiso(yy);cout<<ni<<endl;
 	delete rtoler;
 	delete atoler;
 }

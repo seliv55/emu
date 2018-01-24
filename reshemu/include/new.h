@@ -223,9 +223,9 @@ public:
  void tisolve(const double tmax);
  double ddisolve();
  double integrbs();
-  void setinit();
+  void setinit(std::string fimod="metemu",std::string fipar="1",std::string fiex="mglc",int ntp=1);
 Ldistr(){}
-~Ldistr(){delete[] met; delete[] rr;  delete[] xx;}
+~Ldistr(){delete[] met; delete[] rr;  delete[] xx; delete[] xinit;}
 };
 
 //---------------------------------------------------------------------------
