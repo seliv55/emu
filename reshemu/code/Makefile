@@ -1,6 +1,6 @@
 CFLAGS = -static -O3 -c -I../include -I../integrT
 
-SRC = nv.cpp solvers.cpp readexp.cpp
+SRC = nv.cpp solvers.cpp functions.cpp
 
 OBJECTS = $(SRC:.cpp=.o)
 

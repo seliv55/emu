@@ -130,53 +130,16 @@ bool Parray::belong(int ip) const{
   while(par[i]+1) {if(!(ip-par[i])){b=true; break;} i++;}
   return b;}
    
-double Analis::xmax(){
-  double xax(0.),xmin(0.); int iax(0),iin(0),im;
-   for(int i=0;i<numx;i++) xx[i]=xinit1[i];
-    tsolve(3200.); for(int i=0;i<numx;i++) cout<<Problem.namex[i]<<"="<<xx[i]<<"; "; cout<<endl;
-   for(int i=0;i<(numx);i++) if(xax<xx[i]) {xax=xx[i]; iax=i;}
-                       else if(xmin>xx[i]) {xmin=xx[i]; iin=i;}
-  //     if(xmin<0.) {Problem.infac(iin,1.05);    cout<<Problem.namex[iin]<<"="<<xax<<endl;}
-           for(int i=0;i<numx;i++) xx[i]=xinit1[i];
-         //iax=ncoa;
-               return xax;}
-
-        
-void Ldistr::fitmet(double& xic,int iout,int iin,double fac){
-  double dif0=xic; dif0*=dif0; double oldpar=Problem.rea[iout].v(),oldpar1=Problem.rea[iin].v();
-  for (;;){  Problem.rea[iout].setVm(Problem.rea[iout].v()*fac);
-                 if(iin>0) Problem.rea[iin].setVm(Problem.rea[iin].v()/fac); solve();
-     double dif1=xic; dif1*=dif1;  cout<<"dif="<<dif1<<endl;
-      if(dif1<dif0){dif0=dif1; oldpar=Problem.rea[iout].v(); if(iin>0) oldpar1=Problem.rea[iin].v();}
-       else {Problem.rea[iout].setVm(oldpar); if(iin>0) Problem.rea[iin].setVm(oldpar1); break;}
-       }
-}
-
-double Ldistr::fitm(double& xic,int ipar,double fac){
-  double dif0=xic, oldpar=Problem.rea[ipar].v(), xi; int ic(0);
-  for (;;){  Problem.rea[ipar].setVm(Problem.rea[ipar].v()*fac); xi=solve();
-     cout<<"dif="<<xic<<endl;
-      if(xic<dif0){dif0=xic; oldpar=Problem.rea[ipar].v(); }
-       else if(ic<2){Problem.rea[ipar].setVm(oldpar); fac=1./fac; ic++;}
-        else {Problem.rea[ipar].setVm(oldpar); break;}
-       }
-return xi;}
 
 void Analis::coord(const double f1,double fdes){
 	double xi, xi0,dif0,limdx=20e-4,xlim=2.0;
-	int  ifail(0);//,pmain[]={14,16,18,20,22,24,30,32,34,36,38,40,42,44,46,48,50,52,54,86,87,88,-1};
-	Problem.storeVms(nrea,nv2);//saves nv&xx
+	int  ifail(0);
 cout<< "\nPerturbation+CoordinateDescent:\nPar#\txi2con\txi2iso\tParValue\tdif:" <<endl;
-//       xi=horse.fitcon(); Problem.write(tf,ifn,xi,suxx); ifn++;
-//       horse.setcon(); 
-     for(;;){//Problem.setpar(pmain);
+     for(;;){
         Problem.perturb(f1);
  for(int i=0;i<3;i++) {  try {
-//   while(xmax()>xlim) ; 
-//    double dm(1.);  while(dm>limdx) { dm=dermax(); if(dm>1.) {xi=solve();  Problem.write(tf,ifn,xi,suxx,0); break;}}
     xi=solve(); xm=mader; Problem.write(tf,ifn,xi,suxx);}
   catch( char const* str ){cout << "exception: "<< str <<endl; {Problem.restoreVm(nrea,nv2); }
-                   /**/
  chimin=xi; dif0=dif;
 //   cout<<"* reduce Lac *"<<endl; descent(fdes,-2);
      cout<<"* reduce xi total *"<<endl; descent(fdes);

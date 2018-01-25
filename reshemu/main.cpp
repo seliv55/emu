@@ -28,11 +28,11 @@ int main () {
    }
  emudyn.setinit();
   time_t ts=clock(); 
-   emudyn.ddisolve();
+  double xi=emudyn.ddisolve();
 //   emudyn.integrbs();
 //   emudyn.tsolve(100.);
-   emudyn.shiso(emudyn.getxx());
+   emudyn.shiso();
    tf= (clock()-ts);
 	emudyn.gcon();
-	 cout<<"time="<< tf / (double) CLOCKS_PER_SEC<<" s\n"; 
+	 cout<<"** xi="<<xi<<", time="<< tf / (double) CLOCKS_PER_SEC<<" s **\n"; 
 return 0;}

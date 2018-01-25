@@ -51,7 +51,7 @@ ddassl_(isores,len,t,xx,yprime,tout,info,rtol,atol,idid,rwork,lrw,iwork, liw,  r
  if(idid<0) {  throw("dassl problem"); }
     t=tout;
     }
-	}
+	 xi+=chisq();}
 return xi;}
 
 void derivsl(const DP x, Vec_IO_DP &y, Vec_O_DP &dydx){
@@ -61,14 +61,14 @@ void derivsl(const DP x, Vec_IO_DP &y, Vec_O_DP &dydx){
 	emudyn.mdistr(py, pdydt, x);
 }
 
-double Ldistr::integrbs(){
+double Ldistr::integrbs(){cout<<"pass!!!***";
   DP eps=1.0e-6,h1=0.00001,hmin=1.0e-11,x1=0.0, xfin, tm,xi=0.;
    const int KMAX(2);  Vec_DP yy(len); 
+   for(int i=1;i<len;i++) {yy[i]=xinit[i]; cout<<yy[i]<<" ";} cout<<endl;
       xp_p=new Vec_DP(KMAX); yp_p=new Mat_DP(len,KMAX);
         Vec_DP &xp=*xp_p;  Mat_DP &yp=*yp_p;
     int nbad,nok,ikin=10; nrhs=0; kmax=KMAX;
 //       shiso(pyinit);             //show isotopomers for all EMUs
-   for(int i=1;i<len;i++) yy[i]=xinit[i];
        tm=1.;
 	for(int i=1;i<ntime;i++){
       cout<<"ttime="<<x1<<endl;
