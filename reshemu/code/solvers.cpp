@@ -61,10 +61,10 @@ void derivsl(const DP x, Vec_IO_DP &y, Vec_O_DP &dydx){
 	emudyn.mdistr(py, pdydt, x);
 }
 
-double Ldistr::integrbs(){cout<<"pass!!!***";
+double Ldistr::integrbs(){
   DP eps=1.0e-6,h1=0.00001,hmin=1.0e-11,x1=0.0, xfin, tm,xi=0.;
    const int KMAX(2);  Vec_DP yy(len); 
-   for(int i=1;i<len;i++) {yy[i]=xinit[i]; cout<<yy[i]<<" ";} cout<<endl;
+   for(int i=0;i<len;i++) {yy[i]=xinit[i]; cout<<yy[i]<<" ";} cout<<endl;
       xp_p=new Vec_DP(KMAX); yp_p=new Mat_DP(len,KMAX);
         Vec_DP &xp=*xp_p;  Mat_DP &yp=*yp_p;
     int nbad,nok,ikin=10; nrhs=0; kmax=KMAX;
@@ -74,15 +74,15 @@ double Ldistr::integrbs(){cout<<"pass!!!***";
       cout<<"ttime="<<x1<<endl;
 	tm=tex[i]/ikin;
         dxsav = tm/((double)(KMAX-1));
-        for(int k=0;k<ikin;k++){ xfin=x1+tm;
+        for(int k=0;k<ikin;k++){ xfin=x1+tm;cout<<"pass!!!***"<<endl;
     NR::odeint(yy,x1,xfin,eps,h1,hmin,nok,nbad,derivsl,NR::rkqs);
     x1=xfin;
     }//for(int i=0;i<len;i++) {xx[i]=pyinit[i]; cout<<xx[i]<<" "; } cout<<endl;
 	}
       cout<<"ttime="<<x1<<endl;
    for(int i=1;i<len;i++) xx[i]=yy[i];
-        delete yp_p;
-        delete xp_p;
+//        delete yp_p;
+//        delete xp_p;
  return xi;}
 
 void isT::Function(double x, double *y, double *dy){

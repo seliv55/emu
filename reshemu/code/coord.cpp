@@ -92,45 +92,6 @@ double Analis::dermax(){
          cout<<Problem.namex[im]<<", deriv="<<amax<<endl;
                return amax;}
 
-               
-void Fit::fitc(double dc,double dm,int iin,int iout){
-   double f=0.95;
-  if(dc>0) {if(dm<0)rea[iout].setVm(rea[iout].v()*f);   else rea[iin].setVm(rea[iin].v()/f);}
-  else {if(dm>0) rea[iout].setVm(rea[iout].v()/f); else rea[iin].setVm(rea[iin].v()*f);}
- }
-
-template<size_t l> void Ldistr::setmet(Metab<l>& met,data cmet[],data emet[][l+1],string sname,int vin,int vout){
-   int tax=ntime-1;
- double s=met.gett(), m0=met.getm0(), dc=(s-cmet[tax].mean)/cmet[tax].sd, dm=m0-emet[tax][0].mean, lim=1., xi, f=0.95;
- cout<<sname; 
- for(int i=0;i<7;i++) {
-  if(dc>lim){if(dm<0) Problem.rea[vout]*=f;   else Problem.rea[vin]/=f;}
-  else if(dc<(-lim)){ if(dm>0) Problem.rea[vout]/=f; else Problem. rea[vin]*=f;}
-   else break;
-     xi=solve();
-      s=met.gett(); m0=met.getm0(); dc=(s-cmet[tax].mean)/cmet[tax].sd; dm=m0-emet[tax][0].mean;
-  cout<<"conc="<<s<<"; m0="<<m0<<endl;}
-  if(xi>1.) Problem.write(tf,ifn,xi,suxx,0);
-}
-template<size_t l> void Ldistr::setm0(Metab<l>& met,data cmet[],data emet[][l+1],string sname,int vin,int vout){
-   int tax=ntime-1;
- double s=met.gett(), m0=met.getm0(), dc=(s-cmet[tax].mean)/cmet[tax].sd,dm=(m0-emet[tax][0].mean)/emet[tax][0].sd, lim=1., xi, f=0.95; 
-  cout<<sname;
-   for(int i=0;i<7;i++){
-  if(dm>lim) {if(dc>0.)  Problem.rea[vin]/=f; else Problem.rea[vout]/=f;}
-  else if(dm<(-lim)) {if(dc<0.) Problem.rea[vin]*=f; else Problem.rea[vout]*=f;}
-  else break;
-    xi=solve();
- s=met.gett(); m0=met.getm0(); dc=(s-cmet[tax].mean)/cmet[tax].sd; dm=(m0-emet[tax][0].mean)/emet[tax][0].sd;
-  cout<<"conc="<<s<<"; m0="<<m0<<endl;}
-   if(xi>1.) Problem.write(tf,ifn,xi,suxx,0);
-}
-bool Parray::belong(int ip) const{
- bool b=false; int i=1; 
-  while(par[i]+1) {if(!(ip-par[i])){b=true; break;} i++;}
-  return b;}
-   
-
 void Analis::coord(const double f1,double fdes){
 	double xi, xi0,dif0,limdx=20e-4,xlim=2.0;
 	int  ifail(0);
@@ -141,22 +102,8 @@ cout<< "\nPerturbation+CoordinateDescent:\nPar#\txi2con\txi2iso\tParValue\tdif:"
     xi=solve(); xm=mader; Problem.write(tf,ifn,xi,suxx);}
   catch( char const* str ){cout << "exception: "<< str <<endl; {Problem.restoreVm(nrea,nv2); }
  chimin=xi; dif0=dif;
-//   cout<<"* reduce Lac *"<<endl; descent(fdes,-2);
      cout<<"* reduce xi total *"<<endl; descent(fdes);
- //      xi=horse.fitcon(); Problem.write(tf,ifn,xi,suxx); ifn++;
- //     horse.setcon();
-       /*  while(xmax()>xlim) ; 
-    double dm(1.);  while(dm>limdx) { dm=dermax(); if(dm>1.) {xi=solve();  Problem.write(tf,ifn,xi,suxx); break;}}*/
  chimin=solve(); xm=mader; Problem.write(tf,ifn,chimin,suxx); }
-/*  while (chimin<xi) {
-//  while (dif<dif0) {
-    try {  while(xmax()>xlim) ;
-    double dm(1.);  while(dm>limdx) { dm=dermax(); if(dm>1.) {xi=solve();  Problem.write(tf,ifn,xi,suxx); break;}}
-//    double dm(1.);  while(dm>limdx) { dm=dermax(); if(dm>1.) {xi=solve();  Problem.write(tf,ifn,xi,suxx); break;}}
-   for(int i=0;i<numx;i++) xinit1[i]=xx[i]; chimin=solve(); dif0=dif; Problem.write(tf,ifn,chimin,suxx);  }
-  catch( char const* str ){cout << "exception: "<< str <<endl; get(nrea,Problem.nv,nv2); }
-    xi=chimin; cout<<"* reduce Lac *"<<endl; descent(fdes,-2);
-      cout<<"* reduce xi total *"<<endl; descent(fdes);}*/
 	}
 }}
 /*

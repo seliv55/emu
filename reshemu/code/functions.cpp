@@ -29,9 +29,12 @@ double Ldistr::readex (string fn,int itp) {
 return ts1;}
 
  void Ldistr::rpar(std::string fn){std::ifstream fi(fn.c_str());
-        for(int i=0;i<nre;i++)     rr[i].rpar(fi);      // read parameters
-            for(int i=0;i<nmet;i++) met[i].readc0(fi);  // read concentrations
-       fi>>mname>>mname>>mark>>mval;                    // labeled substrate
+        for(int i=0;i<nre;i++) rr[i].rpar(fi);      // read parameters
+                              int ipar; vpar.clear(); 
+        for(;;) {fi>>ipar; if(ipar<0) break; vpar.push_back(ipar);} 
+                              string aaa; getline(fi,aaa);
+        for(int i=0;i<nmet;i++) met[i].readc0(fi);  // read concentrations
+        fi>>mname>>mname>>mark>>mval;               // labeled substrate
              }
              
  void Ldistr::read(std::string fn){ std::ifstream fi(fn.c_str()); //read "metemu" 

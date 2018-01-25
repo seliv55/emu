@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 #include <fstream> 
 #include <string> 
-
+#include <vector>
 #ifndef newh
 #define newh
 const int tt=5;
@@ -163,6 +163,7 @@ class Ldistr {
  int ntime, len; //number of timepoints, accounted mass isotopomers
  Metab *met;
  Reakcia *rr;
+ std::vector<int> vpar;
  double  *xx, *xinit, tex[tt], Vi, Vt, mu, mval;
  std::string mname, mark;
 public:
