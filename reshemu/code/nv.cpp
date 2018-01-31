@@ -4,6 +4,7 @@ using namespace std;
 	double dt;
 
 void Ldistr::setmetrea(){ hkf=0, hkr=hkf+1, pfk=hkr+1, fbase=pfk+1, aldf=fbase+1, aldr=aldf+1, t3pep=aldr+1, pept3=t3pep+1, pk=pept3+1, pyrlac=pk+1, lacpyr=pyrlac+1, citdr=lacpyr+1, citdf=citdr+1, csyn=citdf+1, akgcit=csyn+1, citakg=akgcit+1, akgdr=citakg+1, akgdf=akgdr+1, citoxc=akgdf+1, liase=citoxc+1, ppp=liase+1, pdh=ppp+1, pc=pdh+1, malic=pc+1, malicc=malic+1, pyrdf=malicc+1, pyrdr=pyrdf+1, maloa=pyrdr+1, oamal=maloa+1, oadr=oamal+1, oadf=oadr+1, akgfum=oadf+1, glnin=akgfum+1, glnout=glnin+1, gluin=glnout+1, gluout=gluin+1, tkp5k=gluout+1, tkh6k=tkp5k+1, tks7k=tkh6k+1, tkt3a=tks7k+1, tke4a=tkt3a+1, tkp5a=tke4a+1, tas7k=tkp5a+1, tah6k=tas7k+1, tae4a=tah6k+1, tat3a=tae4a+1, nre=tat3a+1;
+ifn=1;
  Eglc=0, h6p=Eglc+1, fbp=h6p+1, t3p=fbp+1, pep=t3p+1, pyrc=pep+1, Elac=pyrc+1, citc=Elac+1, cit=citc+1, oa=cit+1, accoa=oa+1, akgc=accoa+1, co2=akgc+1, akg=co2+1, oac=akg+1, p5=oac+1, pyr=p5+1, fumal=pyr+1, Egln=fumal+1, Eglu=Egln+1, gae=Eglu+1, e4p=gae+1, s7p=e4p+1, dhe=s7p+1, nmet=dhe+1;
 rr=new Reakcia[nre];  met=new Metab[nmet]; cout<<"reactions "<<nre<<"; metabolites "<<nmet;}
 

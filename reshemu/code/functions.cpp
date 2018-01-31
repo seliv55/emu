@@ -1,12 +1,14 @@
 #include <iostream>
 #include <cmath>
+#include <sstream>
+#include <fstream>
 #include "new.h"
 using namespace std;
 double xribi, xasp=1.;
 extern double dt;
-double Ldistr::readex (string fn,int itp) {
+double Ldistr::readex (char* fn,int itp) {
   string aaa, scar;
-  ifstream fi(fn.c_str()); double Ti,ts1;  mu=0.;
+  ifstream fi(fn); double Ti,ts1;  mu=0.;
 //  start reading
    fi>> dt; getline(fi,aaa);      tex[0]=0.;  
       for(ntime=1;;ntime++) {fi>>tex[ntime]; tex[ntime] *= 60.; if(tex[ntime]<0) break;}//time points
@@ -28,16 +30,37 @@ double Ldistr::readex (string fn,int itp) {
     if(itp==1) met[Eglc].getex()->setrav(0,1);   //set initially labeled substrate
 return ts1;}
 
- void Ldistr::rpar(std::string fn){std::ifstream fi(fn.c_str());
+ void Ldistr::rpar(char *fn){std::ifstream fi(fn);
         for(int i=0;i<nre;i++) rr[i].rpar(fi);      // read parameters
                               int ipar; vpar.clear(); 
-        for(;;) {fi>>ipar; if(ipar<0) break; vpar.push_back(ipar);} 
+        for(;;) {fi>>ipar; vpar.push_back(ipar); if(ipar>nre) break;} 
                               string aaa; getline(fi,aaa);
         for(int i=0;i<nmet;i++) met[i].readc0(fi);  // read concentrations
         fi>>mname>>mname>>mark>>mval;               // labeled substrate
              }
              
- void Ldistr::read(std::string fn){ std::ifstream fi(fn.c_str()); //read "metemu" 
+ int Ldistr::chekifn(){
+   int i;
+   for(i=ifn;;i++) { char fn[11]; sprintf(fn,"%i",i);
+	   fstream checkfi(fn);
+	   if(!checkfi.good())  break;
+	   checkfi.close();   }
+      return (i);}
+
+ void Ldistr::wpar(bool fmas){
+        ifn=chekifn();
+         char fn[11]; sprintf(fn,"%i",ifn-fmas);
+         cout<<"++ file: "<<(ifn-fmas)<<" * xi="<<xi<<" * time="<<tcal<<"s * sumX="<<sumx<<" ++\n";// fn<<outdir<<ifn;
+          ofstream fi(fn); fi.precision(4);
+        for(int i=0;i<nre;i++) rr[i].wpar(fi,i);     // write parameters
+        for(int i=0;i<vpar.size();i++) fi<<vpar[i]<<' ';  fi<<'\n';
+        for(int i=0;i<nmet;i++) met[i].writec0(fi);  // write concentrations
+        fi<<"**label**\n"<<mname<<' '<<mark<<' '<<mval;               // labeled substrate
+        fi<<"\n **xi= "<<xi<<"\n **time= "<<tcal<<"\n **sumX= "<<sumx<<"\n ** fluxes **\n";
+        for(int i=0;i<nre;i++) rr[i].wflx(fi,i);      // write fluxes
+             }
+             
+ void Ldistr::read(char* fn){ std::ifstream fi(fn); //read "metemu" 
      len=nmet; for(int i=0;i<nmet;i++) len+=met[i].read(fi);
       std::cout<<"; len "<<len<<std::endl;
        xinit=new double[len]; xx=new double[len];}
@@ -58,6 +81,8 @@ return ts1;}
  void Metab::readc0(std::ifstream& fi) {std::string aaa;
     fi>>aaa>>conc; if(aaa!=name) std::cout<<aaa<<"name conflict!"<<name<<std::endl;}
 
+ void Metab::writec0(std::ofstream& fi) {fi<<name<<' '<<conc<<'\n'; }
+ 
  void Edata::readc(std::ifstream& fi,  int nt){ std::string aaa;
      fi>>aaa;
      for(int i=0;i<nt;i++) fi>>econc[i].mean;
@@ -94,8 +119,17 @@ void Edata::setex0(){ emiso[0]=new data[niso];
            }
 
  void Reakcia::rpar(std::ifstream& fi){ std::string aaa;
-    fi>>aaa>>naz>>npar; par=new double[npar];
+    fi>>aaa>>naz>>npar; 
       for(int i=0;i<npar;i++) fi>>par[i]; Vm=par[0];
+        }
+
+ void Reakcia::wpar(std::ofstream& fi,int ipar){ 
+    fi<<ipar<<' '<<naz<<' '<<npar<<' '; 
+      for(int i=0;i<npar;i++) fi<<par[i]<<' '; fi<<'\n';
+        }
+
+ void Reakcia::wflx(std::ofstream& fi,int ipar){
+    fi<<ipar<<' '<<naz<<' '<<flx[0]<<'\n';
         }
 
   double Metab::shiso(){ double xi(0); int emunum;//show  EMUs

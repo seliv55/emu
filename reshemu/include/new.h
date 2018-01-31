@@ -16,7 +16,7 @@ public:
 class Reakcia {
  int npar;
  std::string naz;
- double flx[4], Vm, *par;
+ double flx[4], Vm, par[3];
 public:
  double *v(double x){flx[1]=par[0]/(par[1]+x); flx[0]=flx[1]*x; return flx;}
  
@@ -27,9 +27,19 @@ public:
   std::string& gnaz(){return naz;}
   
  void rpar(std::ifstream& fi);
+
+ void changeVm(double f){ par[0]*=f;}
+ 
+ void restoreVm(double f){ par[0]=Vm;}
+ 
+ void storeVm(double f){ Vm=par[0];}
+ 
+ void wpar(std::ofstream& fi,int ipar);
+ 
+ void wflx(std::ofstream& fi,int ipar);
  
 Reakcia(){}
-~Reakcia(){delete[] par;}
+~Reakcia(){}
 };
 
 class Emu {
@@ -153,6 +163,8 @@ public:
   
   void readc0(std::ifstream& fi);
   
+  void writec0(std::ofstream& fi);
+ 
 Metab(){ieref=-1;}
 ~Metab(){  delete[] emu;}
 };
@@ -160,11 +172,11 @@ Metab(){ieref=-1;}
 class Ldistr {
  int hkf, hkr, pfk, fbase, aldf, aldr, t3pep, pept3, pk, pyrlac, lacpyr, citdr, citdf, csyn, akgcit, citakg, akgdr, akgdf, citoxc, liase, ppp, pdh, pc, malic, malicc, pyrdf, pyrdr, maloa, oamal, oadr, oadf, akgfum, glnin, glnout, gluin, gluout, tkp5k, tkh6k, tks7k, tkt3a, tke4a, tkp5a, tas7k, tah6k, tae4a, tat3a, nre;
  int Eglc, h6p, fbp, t3p, pep, pyrc, Elac, citc, cit, oa, accoa, akgc, co2, akg, oac, p5, pyr, fumal, Egln, Eglu, gae, e4p, s7p, dhe, nmet;
- int ntime, len; //number of timepoints, accounted mass isotopomers
+ int ntime, len, ifn; //number of timepoints, accounted mass isotopomers
  Metab *met;
  Reakcia *rr;
  std::vector<int> vpar;
- double  *xx, *xinit, tex[tt], Vi, Vt, mu, mval;
+ double  *xx, *xinit, tex[tt], Vi, Vt, mu, mval,xi, tcal,sumx;
  std::string mname, mark;
 public:
  void setmetrea();
@@ -181,11 +193,13 @@ public:
  
  void markinit();
  
- void rpar(std::string fn);
+ void rpar(char *fn);
  
- void read(std::string fn);
+ void wpar(bool fmas=0);
  
- double readex(std::string fn,int itp);
+ void read(char* fn);
+ 
+ double readex(char* fn,int itp);
  
  int glen() { return len;}
  
@@ -219,8 +233,12 @@ public:
  
  double integrbs();
  
-  void setinit(std::string fimod="metemu",std::string fipar="1",std::string fiex="mglc",int ntp=1);
+ void setinit(char* fimod=(char*)"metemu",char* fipar=(char*)"1",char* fiex=(char*)"mglc",int ntp=1);
   
+ void perturb(const double f1);
+
+ int chekifn( );
+ 
 Ldistr(){}
 ~Ldistr(){delete[] met; delete[] rr;  delete[] xx; delete[] xinit;}
 };

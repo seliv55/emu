@@ -34,9 +34,9 @@ void res(const double& T, double y[],const double yprime[], double delta[], int&
 	for(unsigned i=0;i<len;i++) delta[i]=dy[i]-yprime[i];
 }
 /**/
-double Ldistr::ddisolve() {
+double Ldistr::ddisolve() { xi=0.;   time_t ts=clock(); 
         int info[15],idid=0,lrw=800000,liw=1190,iwork[1190],ipar[2],ires=0,ikin=25;
-double t=0.,xi=0., yprime[len],rtol=0.075,atol=1.0e-6,h0=0.1e-5, hmax=5.2, rpar[2], rwork[800000];
+double t=0., yprime[len],rtol=0.075,atol=1.0e-6,h0=0.1e-5, hmax=5.2, rpar[2], rwork[800000];
         for(int i=0;i<15;i++)   info[i]=0;
       info[6]=1; rwork[1]=hmax; rwork[2]=h0; info[10]=1;
  double tout,  tm;
@@ -49,9 +49,10 @@ double t=0.,xi=0., yprime[len],rtol=0.075,atol=1.0e-6,h0=0.1e-5, hmax=5.2, rpar[
         for(int k=0;k<ikin;k++){ tout=t+tm;
 ddassl_(isores,len,t,xx,yprime,tout,info,rtol,atol,idid,rwork,lrw,iwork, liw,  rpar, ipar, jac);
  if(idid<0) {  throw("dassl problem"); }
-    t=tout;
-    }
+    t=tout;    }
 	 xi+=chisq();}
+	 tcal=(double)(clock()-ts)/(double)CLOCKS_PER_SEC;
+	 sumx=0.; for(int i=0;i<nmet;i++) sumx += met[i].gcon();
 return xi;}
 
 void derivsl(const DP x, Vec_IO_DP &y, Vec_O_DP &dydx){
@@ -64,19 +65,19 @@ void derivsl(const DP x, Vec_IO_DP &y, Vec_O_DP &dydx){
 double Ldistr::integrbs(){
   DP eps=1.0e-6,h1=0.00001,hmin=1.0e-11,x1=0.0, xfin, tm,xi=0.;
    const int KMAX(2);  Vec_DP yy(len); 
-   for(int i=0;i<len;i++) {yy[i]=xinit[i]; cout<<yy[i]<<" ";} cout<<endl;
-      xp_p=new Vec_DP(KMAX); yp_p=new Mat_DP(len,KMAX);
-        Vec_DP &xp=*xp_p;  Mat_DP &yp=*yp_p;
+   for(int i=0;i<len;i++) {yy[i]=xinit[i];}
+//      xp_p=new Vec_DP(KMAX); yp_p=new Mat_DP(len,KMAX);
+//        Vec_DP &xp=*xp_p;  Mat_DP &yp=*yp_p;
     int nbad,nok,ikin=10; nrhs=0; kmax=KMAX;
 //       shiso(pyinit);             //show isotopomers for all EMUs
        tm=1.;
 	for(int i=1;i<ntime;i++){
       cout<<"ttime="<<x1<<endl;
-	tm=tex[i]/ikin;
+	tm=tex[i]/(double)ikin;
         dxsav = tm/((double)(KMAX-1));
-        for(int k=0;k<ikin;k++){ xfin=x1+tm;cout<<"pass!!!***"<<endl;
+        for(int k=0;k<ikin;k++){ xfin=x1+tm;
     NR::odeint(yy,x1,xfin,eps,h1,hmin,nok,nbad,derivsl,NR::rkqs);
-    x1=xfin;
+    x1=xfin;cout<<"pass!!!***"<<endl;
     }//for(int i=0;i<len;i++) {xx[i]=pyinit[i]; cout<<xx[i]<<" "; } cout<<endl;
 	}
       cout<<"ttime="<<x1<<endl;

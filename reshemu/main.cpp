@@ -1,14 +1,15 @@
 #include <iostream> 
 #include <sstream> 
+#include <fstream> 
 #include <string>
 #include "nr.h"
 #include "solvers.h"
 #include "new.h"
 using namespace std;
-  Ldistr emudyn; int  ifn=0;
-    time_t ts,tf; string fex1="../files/mglc", fex2="../files/mglc";
+  Ldistr emudyn;
   extern string foc, kin0, kin, kinflx;
-  void Ldistr::setinit(string fimod,string fipar,string fiex,int ntp){
+
+void Ldistr::setinit(char* fimod,char *fipar,char* fiex,int ntp){
      setmetrea();//code in nv.cpp: assign numbers for metabolites and reactions
   read(fimod);//define emus
    rpar(fipar);// read reaction constants, initial concentrations of metabolites, labeled substrate
@@ -20,19 +21,12 @@ using namespace std;
   }
 
 int main () {
-   char fn[15];
-   for(int i=1;;i++) { sprintf(fn,"%i",i);
-	   ifstream checkfi(fn);
-	   if(!checkfi.good()) { ifn=i-1; break;}
-	   checkfi.close();
-   }
  emudyn.setinit();
-  time_t ts=clock(); 
+//cout<<"files="<<emudyn.chekifn()<<'\n';
   double xi=emudyn.ddisolve();
-//   emudyn.integrbs();
+//   double xi=emudyn.integrbs();
 //   emudyn.tsolve(100.);
    emudyn.shiso();
-   tf= (clock()-ts);
 	emudyn.gcon();
-	 cout<<"** xi="<<xi<<", time="<< tf / (double) CLOCKS_PER_SEC<<" s **\n"; 
+	emudyn.wpar(1);
 return 0;}

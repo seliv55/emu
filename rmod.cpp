@@ -73,7 +73,7 @@ using namespace std;
        }
                    k++;}
   }
-      fo.open("reshemu/asdf.cpp"); fo<<"#include <iostream>\n#include <cmath>\n#include \"new.h\"\nusing namespace std;\nvoid Ldistr::mdistr(double *py,double *pdydt,double t) {\n\tint nx=nmet, ni=nmet;\n//	siso(py,ni);\n\tsdiso(pdydt,nx);\n\tVt=Vi*exp(mu*t);\n\tconcor(py);\n\tf(py,pdydt);\n\tff(py,pdydt);\n";
+      fo.open("reshemu/asdf.cpp"); fo<<"#include <iostream>\n#include <cmath>\n#include \"new.h\"\nusing namespace std;\nvoid Ldistr::mdistr(double *py,double *pdydt,double t) {\n\tint nx=nmet, ni=nmet;\n\tsiso(py,ni);\n\tsdiso(pdydt,nx);\n\tVt=Vi*exp(mu*t);\n//\tconcor(py);\n\tf(py,pdydt);\n\tff(py,pdydt);\n";
       fo<<ostr.str()<<"\tvolume(Vt); }\n"; fo.close();
 //       for(int i=0;i<obnum;i++) { oblst[i]->showmet(); }/**/
     ostringstream sfo;

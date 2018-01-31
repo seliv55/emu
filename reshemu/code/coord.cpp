@@ -8,16 +8,17 @@
 #include "analis.h"
 #include "solvers.h"
 using namespace std;
-double Analis::descent(double factor,int ip){ 
+double Ldistr::descent(double factor,int ip){ 
 	double xi1, a, sens, slim=0.01, dp=factor-1.;
 	const double xili(0.9998);
-	int k, jfail(0), parcp[nrea];
-  double tcal=tf;
-  double xi0 = (chimin+suxx*suxx); cout<<"xi0="<<xi0<<endl;
-  int npf = Problem.getListFit(parcp); ifn++;
-  if(ip>=0) {for(k=0;k<npf;k++) if(parcp[k] = ip) break;
-   cout<<"Descent: par="<<Problem.rea[parcp[k]].getname()<<endl;
-                 for(int i=k;i<npf;i++) parcp[i] = parcp[i+1]; npf--;}
+	int k, jfail(0); vector<int> parcp;
+  for(int i=0; ;i++){ if(vpar[i]<0) break; parcp.push_back(vpar[i]);}
+  double tref=tcal;
+  double xi0 = (chimin+sumx); cout<<"xi0="<<xi0<<endl;
+  int npf = size(parcp);
+  if(ip>=0) for(k=0;k<npf;k++) if(parcp[k] = ip){
+          cout<<"Descent: par="<<rr[parcp[k]].getname()<<'\n';
+          parcp.erase(parcp.begin()+k); npf--; break;}
    cout<<"npf="<<npf<<"  "<<parcp[npf-1]<<endl;
   while (npf>0)  {int j(0), flag(0);
    int i = rand() % npf; npf--; 
@@ -71,13 +72,13 @@ void Analis::confidence(double factor,double fdes){
         Problem.restoreVm(nrea,nv1);  }
    }
 
-void Fit::perturb(const double f1){
-   int i=1; double sign,fact;
-     while(par[i]>=0){// cout<<"par["<<i<<"]="<<par[i]<<endl;
+void Ldistr::perturb(const double f1,vector<int> vpar){
+    double sign, fact;
+     for(int i=0; ;i++){ if(vpar[i]<0) break;// cout<<"par["<<i<<"]="<<par[i]<<endl;
       sign = (double)rand() / (double)RAND_MAX;
 	fact = 1.- f1*(0.5 - sign);
-	rea[par[i]].setVm(rea[par[i]].v()*fact);
-	   i++;	}
+	rr[vpar[i]].changeVm(fact);
+	   	}
 	   }
 	   
 double Analis::dermax(){
@@ -92,18 +93,18 @@ double Analis::dermax(){
          cout<<Problem.namex[im]<<", deriv="<<amax<<endl;
                return amax;}
 
-void Analis::coord(const double f1,double fdes){
-	double xi, xi0,dif0,limdx=20e-4,xlim=2.0;
+void Ldistr::coord(const double f1,double fdes){
+	double xi, xi0,dif0;
 	int  ifail(0);
 cout<< "\nPerturbation+CoordinateDescent:\nPar#\txi2con\txi2iso\tParValue\tdif:" <<endl;
      for(;;){
-        Problem.perturb(f1);
+        perturb(f1);
  for(int i=0;i<3;i++) {  try {
-    xi=solve(); xm=mader; Problem.write(tf,ifn,xi,suxx);}
-  catch( char const* str ){cout << "exception: "<< str <<endl; {Problem.restoreVm(nrea,nv2); }
- chimin=xi; dif0=dif;
+    xi=ddisolve(); wpar();}
+  catch( char const* str ){cout << "exception: "<< str <<endl; for(int i=0; ;i++){ if(vpar[i]<0) break; rr[i].restorevm(); }
+ chimin=xi; 
      cout<<"* reduce xi total *"<<endl; descent(fdes);
- chimin=solve(); xm=mader; Problem.write(tf,ifn,chimin,suxx); }
+ chimin=ddisolve(); wpar(); }
 	}
 }}
 /*
