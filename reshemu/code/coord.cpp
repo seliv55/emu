@@ -1,76 +1,71 @@
 #include <iostream>
 #include <sstream>
 #include "nr.h"
-#include "nums.hh"
-#include "tk.hh"
-#include "nv.hh"
-#include "modlab.h"
-#include "analis.h"
+#include "new.h"
 #include "solvers.h"
 using namespace std;
 double Ldistr::descent(double factor,int ip){ 
 	double xi1, a, sens, slim=0.01, dp=factor-1.;
 	const double xili(0.9998);
-	int k, jfail(0); vector<int> parcp;
+	int k; vector<int> parcp;
   for(int i=0; ;i++){ if(vpar[i]<0) break; parcp.push_back(vpar[i]);}
   double tref=tcal;
-  double xi0 = (chimin+sumx); cout<<"xi0="<<xi0<<endl;
-  int npf = size(parcp);
+  double xi0 = (xi+sumx); cout<<"xi0="<<xi0<<endl;
+  int npf = parcp.size();
   if(ip>=0) for(k=0;k<npf;k++) if(parcp[k] = ip){
-          cout<<"Descent: par="<<rr[parcp[k]].getname()<<'\n';
-          parcp.erase(parcp.begin()+k); npf--; break;}
+            cout<<"Descent: par="<<rr[parcp[k]].gnaz()<<'\n';
+            parcp.erase(parcp.begin()+k); npf--; break;}
    cout<<"npf="<<npf<<"  "<<parcp[npf-1]<<endl;
   while (npf>0)  {int j(0), flag(0);
    int i = rand() % npf; npf--; 
-    while (flag<2) { a = Problem.rea[parcp[i]].v();
-     Problem.rea[parcp[i]].setVm(a*factor); cout << parcp[i] << ")";
-      try{ xmin = solve(); xm=mader;  double tr=(double)tf/(double)tcal;
-	xi1 = (xmin+suxx*suxx)*tr*mader/xm;
-	 sens=(xi0-xi1)/xi0/dp;
-	  cout<<Problem.rea[parcp[i]].getname()<<": sens="<<sens<<endl;
-       } catch( char const* str )
-	  {cout << "exception: "<< str <<endl; sens=0.;  jfail++; flag=2; Problem.rea[parcp[i]].setVm(a);
-  if(!(jfail-5)){jfail=0; Problem.restoreVm(nrea,nv2); } }
+    while (flag<2) { rr[parcp[i]].changeVm(factor);
+     cout << parcp[i] << ")";
+     try{ xi = ddisolve();
+	xi1 = (xi+sumx)*tcal/tref;
+	sens=(xi0-xi1)/xi0/dp;
+	cout<<rr[parcp[i]].gnaz()<<": sens="<<sens<<endl;
+       } catch( char const* str ) {cout << "exception: "<< str <<endl; sens=0.;
+                                   flag=2; rr[parcp[i]].restoreVm();}
  if (sens>slim) {
-   xi0 = xi1; chimin=xmin; tcal=tf; xm=mader; jfail=0; j++; Problem.write(tf,ifn,xmin,suxx,0);
-     if(!(j-3)) flag=2;   Problem.storeVms(nrea,nv1);
+   xi0 = xi1;  tref=tcal; j++; wpar();
+     if(!(j-3)) flag=2;   rr[parcp[i]].storeVm();
        	}
- else if(sens<-slim) {factor = 1./factor; ++flag; Problem.rea[parcp[i]].setVm(a);}
-  else {flag=2; Problem.rea[parcp[i]].setVm(a);}
+ else if(sens<-slim) {factor = 1./factor; ++flag; rr[parcp[i]].restoreVm();}
+  else {flag=2; rr[parcp[i]].restoreVm();}
         }//end while flag
-	for ( k=i;k<npf;k++) parcp[k] = parcp[k+1];}
+	parcp.erase(parcp.begin()+i);}
  return xi0;}
  
- void Analis::rconfint(ifstream& fi, double ami[],double ama[]){
-  string aaa;
-   for(int i=0;i<nrea;i++) {fi>>aaa>>aaa>>aaa>>ami[i]>>ama[i]; getline(fi,aaa);}
- }
- 
- void Analis::stepdown(double factor, int& i,double fdes){
-   double oldp;
-   cout << "; v["<<Problem.rea[i].getname()<<"]: "<<Problem.rea[i].v()<<endl;
-  try { chimin = solve();
-     for(int j=0;j<5;j++) {oldp = Problem.rea[i].chanVm(factor); chimin = solve(); 
-       if((chimin-x00)>6.7) break;}   Problem.write(tf,ifn,chimin,suxx);   
-        descent(fdes,i); Problem.write(tf,ifn,chimin,suxx); 
-   if (chimin<x00) {x00=chimin; Problem.storeVms(nrea,nv1); Problem.write(tf,ifn,chimin,suxx);} }
-  catch( char const* str ){ cout << "exception: "<< str <<endl; chimin=x00+1000.; Problem.rea[i].setVm(oldp);}
-       }
- 
-void Analis::confidence(double factor,double fdes){ 
-	double a0mi[nrea], a0ma[nrea], a1mi[nrea], a1ma[nrea];
-	 ifstream fi("statfl"); rconfint(fi,a0mi,a0ma); fi.close();
-	   fi.open("statfl1");  rconfint(fi,a1mi,a1ma); fi.close();
-	int parcp[nrea], npf = Problem.getListFit(parcp);
-	          Problem.storeVms(nrea,nv1);  chimin=x00;
-  while (npf>0)  {   int i = rand() % npf;
-   if((a0ma[parcp[i]]<a1mi[parcp[i]])&&(a0ma[parcp[i]]>7.e-7)){
-       stepdown(factor,parcp[i],fdes);}
-   else if((a0mi[parcp[i]]>a1ma[parcp[i]])&&(a1ma[parcp[i]>7.e-7])) {
-       stepdown(1./factor,parcp[i],fdes);}
-   npf--; for (int k=i;k<npf;k++) parcp[k]=parcp[k+1];
-        Problem.restoreVm(nrea,nv1);  }
-   }
+// void Analis::rconfint(ifstream& fi, double ami[],double ama[]){
+//  string aaa;
+//   for(int i=0;i<nrea;i++) {fi>>aaa>>aaa>>aaa>>ami[i]>>ama[i]; getline(fi,aaa);}
+// }
+// 
+// void Analis::stepdown(double factor, int& i,double fdes){
+//   double oldp;
+//   cout << "; v["<<Problem.rea[i].getname()<<"]: "<<Problem.rea[i].v()<<endl;
+//  try { chimin = solve();
+//     for(int j=0;j<5;j++) {oldp = Problem.rea[i].chanVm(factor); chimin = solve(); 
+//       if((chimin-x00)>6.7) break;}   Problem.write(tf,ifn,chimin,suxx);   
+//        descent(fdes,i); Problem.write(tf,ifn,chimin,suxx); 
+//   if (chimin<x00) {x00=chimin; Problem.storeVms(nrea,nv1); Problem.write(tf,ifn,chimin,suxx);} }
+//  catch( char const* str ){ cout << "exception: "<< str <<endl; chimin=x00+1000.; Problem.rea[i].setVm(oldp);}
+//       }
+// 
+//void Analis::confidence(double factor,double fdes){ 
+//	double a0mi[nrea], a0ma[nrea], a1mi[nrea], a1ma[nrea];
+//	 ifstream fi("statfl"); rconfint(fi,a0mi,a0ma); fi.close();
+//	   fi.open("statfl1");  rconfint(fi,a1mi,a1ma); fi.close();
+//	int parcp[nrea], npf = Problem.getListFit(parcp);
+//	          Problem.storeVms(nrea,nv1);  chimin=x00;
+//  while (npf>0)  {   int i = rand() % npf;
+//   if((a0ma[parcp[i]]<a1mi[parcp[i]])&&(a0ma[parcp[i]]>7.e-7)){
+//       stepdown(factor,parcp[i],fdes);}
+//   else if((a0mi[parcp[i]]>a1ma[parcp[i]])&&(a1ma[parcp[i]>7.e-7])) {
+//       stepdown(1./factor,parcp[i],fdes);}
+//   npf--; for (int k=i;k<npf;k++) parcp[k]=parcp[k+1];
+//        Problem.restoreVm(nrea,nv1);  }
+//   }
 
 void Ldistr::perturb(const double f1,vector<int> vpar){
     double sign, fact;
@@ -81,32 +76,31 @@ void Ldistr::perturb(const double f1,vector<int> vpar){
 	   	}
 	   }
 	   
-double Analis::dermax(){
-  double dx[numx], amax, dmax(0.),dmin(0.),f=1.02, ff; int iax(0),iin(0),im;
-   for(int i=0;i<numx;i++) xx[i]=xinit1[i];
-    tsolve(3200.); Problem.f(xx,dx);
-   for(int i=0;i<(numx-2);i++) if(dmax<dx[i]) {dmax=dx[i]; iax=i;}
-                       else if(dmin>dx[i]) {dmin=dx[i]; iin=i;}
-   dmin*=-1; if(dmax>dmin) {ff=f; amax=dmax; im=iax;}
-        else {ff=1./f; amax=dmin; im=iin;}
-   for(int i=0;i<numx;i++) xx[i]=xinit1[i];
-         cout<<Problem.namex[im]<<", deriv="<<amax<<endl;
-               return amax;}
+//double Analis::dermax(){
+//  double dx[numx], amax, dmax(0.),dmin(0.),f=1.02, ff; int iax(0),iin(0),im;
+//   for(int i=0;i<numx;i++) xx[i]=xinit1[i];
+//    tsolve(3200.); Problem.f(xx,dx);
+//   for(int i=0;i<(numx-2);i++) if(dmax<dx[i]) {dmax=dx[i]; iax=i;}
+//                       else if(dmin>dx[i]) {dmin=dx[i]; iin=i;}
+//   dmin*=-1; if(dmax>dmin) {ff=f; amax=dmax; im=iax;}
+//        else {ff=1./f; amax=dmin; im=iin;}
+//   for(int i=0;i<numx;i++) xx[i]=xinit1[i];
+//         cout<<Problem.namex[im]<<", deriv="<<amax<<endl;
+//               return amax;}
 
 void Ldistr::coord(const double f1,double fdes){
 	double xi, xi0,dif0;
 	int  ifail(0);
-cout<< "\nPerturbation+CoordinateDescent:\nPar#\txi2con\txi2iso\tParValue\tdif:" <<endl;
+cout<< "\nPerturbation+CoordinateDescent:\n";
      for(;;){
         perturb(f1);
- for(int i=0;i<3;i++) {  try {
-    xi=ddisolve(); wpar();}
-  catch( char const* str ){cout << "exception: "<< str <<endl; for(int i=0; ;i++){ if(vpar[i]<0) break; rr[i].restorevm(); }
- chimin=xi; 
-     cout<<"* reduce xi total *"<<endl; descent(fdes);
- chimin=ddisolve(); wpar(); }
-	}
-}}
+ for(int i=0;i<3;i++) {
+   try {  xi=ddisolve(); wpar();} catch( char const* str ){
+      cout << "exception: "<< str <<endl; for(int i=0; ;i++){
+      if(vpar[i]<0) break; rr[i].restoreVm(); }}
+   descent(fdes,-1);
+   ddisolve(); wpar(); }
+	}   }
 /*
 void Analis::sensitiv(const double tmax){ 
   double factor(1.1), xi1, xm1, a;
@@ -202,41 +196,41 @@ if(xm<xmm){
 	 xm=getmax();
                 Problem.write(tmin,nfi,chimin,xm);}
 }*/
-void Analis::swarm(const double tmax,const int ngen){
-	char fn[11];
-double xi,r1,r2,f1,xmm(100.),c1(0.8),c2(1.),w(0.5),xm,v[nrea],f0[ngen];
-double pbest[ngen][nrea],pcurr[ngen][nrea];
-	int it,ifail(0),par[nrea];
-cout<<"swarm:"<<endl;
-		int sign,imut,nfi;
-for(int i=1;i<ngen;i++){
- sprintf(fn,"%i",i);
-  xi=Problem.read(it,xm,fn);
-	Problem.storeVms(nrea, &pbest[i][0]);
-	Problem.storeVms(nrea, &pcurr[i][0]);
-  f0[i] = xi; 
-  }
-f0[0]=f0[1]; //get(nrea,&pbest[0][0],&pbest[1][0]);
-		for(;;){
-for(int i=2;i<ngen;i++){cout<<" i="<<i;
-	Problem.restoreVm(nrea,&pcurr[i][0]);
-	 r1 = (double)rand() / (double)RAND_MAX;
-	 r2 = (double)rand() / (double)RAND_MAX;
-   for(int j=0;j<nrea;j++){
- v[j]=w*v[j]+c1*r1*(pbest[i][j]-Problem.rea[j].v())+c2*r2*(pbest[0][j]-Problem.rea[j].v());
-    Problem.rea[j].setVm(Problem.rea[j].v() + v[j]);
-    }/**/
-	try {
-	//   get(numx,xx,xinit1); 
-  xi=solve(); cout<<"; xi="<<xi<< endl;
-    xm=suxx; Problem.storeVms(nrea,&pcurr[i][0]);
-       f1 = xi;//+xm)*sqrt((dif/dif0)); 
-	//   get(numx,xx,xinit1); 
-    if(f1<f0[i])  {Problem.write(tf,i,xi,xm,0); 
-       cout<<"f0="<<(f0[i]=f1)<<endl;
-          Problem.storeVms(nrea,&pbest[i][0]); 
-    if(f1<f0[0]){f0[0]=f1; Problem.storeVms(nrea,&pbest[0][0]);}}
-	} catch(char const * ierr){cout << "error " << endl;}
-		}}
-}
+//void Analis::swarm(const double tmax,const int ngen){
+//	char fn[11];
+//double xi,r1,r2,f1,xmm(100.),c1(0.8),c2(1.),w(0.5),xm,v[nrea],f0[ngen];
+//double pbest[ngen][nrea],pcurr[ngen][nrea];
+//	int it,ifail(0),par[nrea];
+//cout<<"swarm:"<<endl;
+//		int sign,imut,nfi;
+//for(int i=1;i<ngen;i++){
+// sprintf(fn,"%i",i);
+//  xi=Problem.read(it,xm,fn);
+//	Problem.storeVms(nrea, &pbest[i][0]);
+//	Problem.storeVms(nrea, &pcurr[i][0]);
+//  f0[i] = xi; 
+//  }
+//f0[0]=f0[1]; //get(nrea,&pbest[0][0],&pbest[1][0]);
+//		for(;;){
+//for(int i=2;i<ngen;i++){cout<<" i="<<i;
+//	Problem.restoreVm(nrea,&pcurr[i][0]);
+//	 r1 = (double)rand() / (double)RAND_MAX;
+//	 r2 = (double)rand() / (double)RAND_MAX;
+//   for(int j=0;j<nrea;j++){
+// v[j]=w*v[j]+c1*r1*(pbest[i][j]-Problem.rea[j].v())+c2*r2*(pbest[0][j]-Problem.rea[j].v());
+//    Problem.rea[j].setVm(Problem.rea[j].v() + v[j]);
+//    }/**/
+//	try {
+//	//   get(numx,xx,xinit1); 
+//  xi=solve(); cout<<"; xi="<<xi<< endl;
+//    xm=suxx; Problem.storeVms(nrea,&pcurr[i][0]);
+//       f1 = xi;//+xm)*sqrt((dif/dif0)); 
+//	//   get(numx,xx,xinit1); 
+//    if(f1<f0[i])  {Problem.write(tf,i,xi,xm,0); 
+//       cout<<"f0="<<(f0[i]=f1)<<endl;
+//          Problem.storeVms(nrea,&pbest[i][0]); 
+//    if(f1<f0[0]){f0[0]=f1; Problem.storeVms(nrea,&pbest[0][0]);}}
+//	} catch(char const * ierr){cout << "error " << endl;}
+//		}}
+//}
 

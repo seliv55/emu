@@ -29,4 +29,5 @@ int main () {
    emudyn.shiso();
 	emudyn.gcon();
 	emudyn.wpar(1);
+	emudyn.coord(0.1,1.05);
 return 0;}

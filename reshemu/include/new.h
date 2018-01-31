@@ -30,9 +30,9 @@ public:
 
  void changeVm(double f){ par[0]*=f;}
  
- void restoreVm(double f){ par[0]=Vm;}
+ void restoreVm(){ par[0]=Vm;}
  
- void storeVm(double f){ Vm=par[0];}
+ void storeVm(){ Vm=par[0];}
  
  void wpar(std::ofstream& fi,int ipar);
  
@@ -238,6 +238,12 @@ public:
  void perturb(const double f1);
 
  int chekifn( );
+
+ void perturb(const double f1,std::vector<int> vpar);
+
+ void coord(const double f1,double fdes);
+
+ double descent(double factor,int ip);
  
 Ldistr(){}
 ~Ldistr(){delete[] met; delete[] rr;  delete[] xx; delete[] xinit;}
