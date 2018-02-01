@@ -239,8 +239,6 @@ public:
 
  int chekifn( );
 
- void perturb(const double f1,std::vector<int> vpar);
-
  void coord(const double f1,double fdes);
 
  double descent(double factor,int ip);

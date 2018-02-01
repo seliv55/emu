@@ -67,7 +67,7 @@ double Ldistr::descent(double factor,int ip){
 //        Problem.restoreVm(nrea,nv1);  }
 //   }
 
-void Ldistr::perturb(const double f1,vector<int> vpar){
+void Ldistr::perturb(const double f1){
     double sign, fact;
      for(int i=0; ;i++){ if(vpar[i]<0) break;// cout<<"par["<<i<<"]="<<par[i]<<endl;
       sign = (double)rand() / (double)RAND_MAX;
